@@ -1,6 +1,6 @@
 # Cinemas
 
-[TODO. There will be project description]
+This program output top 10 movies in russian cinema by rating from kinopoisk.ru
 
 # Project Goals
 
