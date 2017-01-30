@@ -20,18 +20,15 @@ def parse_afisha_list(raw_html):
 
 
 def get_only_popular_movie_titles(list_movies):
-    only_popular_names_list = []
-    for movie in list_movies:
-        if int(movie[1]) > 10:
-            only_popular_names_list.append(movie[0])
+    only_popular_names_list = [movie[0] for movie in list_movies if int(movie[1]) > 10]
     return only_popular_names_list
 
 
-def make_dict_name_rating(movie_names_list):
+def make_dict_name_rating(movie_names_list, timeout=6):
     names_rating_votes_dict = {}
     for movie_name in movie_names_list:
         names_rating_votes_dict[movie_name] = fetch_movie_info(movie_name)
-        time.sleep(6)
+        time.sleep(timeout)
     return names_rating_votes_dict
 
 
@@ -87,6 +84,7 @@ if __name__ == '__main__':
     raw_afisha_html = fetch_afisha_page()
     list_movie_and_places_amount = (parse_afisha_list(raw_afisha_html))
     only_popular_titles_list = get_only_popular_movie_titles(list_movie_and_places_amount)
-    dict_name_rating = make_dict_name_rating(only_popular_titles_list)
-    top10_list = make_top_list(dict_name_rating, top_list_amount)
-    output_to_console(top10_list)
+    print(only_popular_titles_list)
+    #dict_name_rating = make_dict_name_rating(only_popular_titles_list)
+    #top10_list = make_top_list(dict_name_rating, top_list_amount)
+    #output_to_console(top10_list)
