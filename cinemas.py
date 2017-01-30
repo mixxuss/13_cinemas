@@ -18,9 +18,8 @@ def get_only_popular_movie_titles(dict_movies_places, min_places_amount=30):
 
 
 def make_dict_name_rating(movies_names_list):
-    names_rating_votes_dict = {}
-    for movie_name in movies_names_list:
-        names_rating_votes_dict[movie_name] = fetch_movie_info(get_page_html(fetch_kinopoisk_movie_url(movie_name)))
+    names_rating_votes_dict = {movie_name:parse_movie_info(get_page_html(fetch_kinopoisk_movie_url(movie_name)))
+                               for movie_name in movies_names_list}
     return names_rating_votes_dict
 
 
@@ -29,19 +28,17 @@ def fetch_kinopoisk_movie_url(movie_name):
     params = {
         'text': movie_name
     }
-    response = requests.get(url, params)
-    search_page_html = response.text
+    search_page_html = get_page_html(url, params)
     soup = BeautifulSoup(search_page_html, 'html.parser')
     movie_url = soup.find('a', 'link  film-snippet__media-content').attrs['href']
     return movie_url
 
 
-def get_page_html(url):
-    movie_page_html = requests.get(url).text
-    return movie_page_html
+def get_page_html(url, params=None):
+    return requests.get(url, params).text
 
 
-def fetch_movie_info(search_movie_html):
+def parse_movie_info(search_movie_html):
     try:
         soup = BeautifulSoup(search_movie_html, 'html.parser')
         rating = soup.find('div', 'rating-button__rating').text
