@@ -24,11 +24,10 @@ def get_only_popular_movie_titles(dict_movies_places, min_places_amount=30):
     return only_popular_names_list
 
 
-def make_dict_name_rating(movie_names_list, timeout=15):
+def make_dict_name_rating(movies_names_list):
     names_rating_votes_dict = {}
-    for movie_name in movie_names_list:
-        names_rating_votes_dict[movie_name] = fetch_movie_info(fetch_kinopoisk_page(movie_name))
-        time.sleep(timeout)
+    for movie_name in movies_names_list:
+        names_rating_votes_dict[movie_name] = fetch_movie_info(fetch_new_kinopoisk_page(fetch_kinopoisk_movie_url(movie_name)))
     return names_rating_votes_dict
 
 
@@ -42,30 +41,6 @@ def fetch_kinopoisk_movie_url(movie_name):
     soup = BeautifulSoup(search_page_html, 'html.parser')
     movie_url = soup.find('a', 'link  film-snippet__media-content').attrs['href']
     return movie_url
-
-
-def fetch_kinopoisk_page(movie_name):
-    url = 'https://www.kinopoisk.ru/index.php'
-    headers = {
-        'UserAgent': 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36'
-    }
-    params = {
-        'first': 'no',
-        'what': '',
-        'kp_query': movie_name
-    }
-    cookies = {'user_country': 'ru',
-               'yandex_gid': '10758',
-               'mobile': 'no',
-               'PHPSESSID': '7b74661247009b38f33dee4bfad99827',
-               'last_visit': '2017-01-30+11%3A47%3A43'}
-    try:
-        session = requests.Session()
-        response = session.get(url, params=params, headers=headers, cookies=cookies)
-        search_movie_html = response.text
-        return search_movie_html
-    except:
-        return ''
 
 
 def fetch_new_kinopoisk_page(url):
@@ -102,15 +77,12 @@ def output_to_console(sorted_movie_list):
 
 if __name__ == '__main__':
     top_list_amount = 10
-    print(fetch_kinopoisk_movie_url('Балерина'))
-    print(fetch_movie_info(fetch_new_kinopoisk_page(fetch_kinopoisk_movie_url('Балерина'))))
-    #raw_afisha_html = fetch_afisha_page()
-    #list_movie_and_places_amount = (parse_afisha_list(raw_afisha_html))
-    #only_popular_titles_list = get_only_popular_movie_titles(list_movie_and_places_amount)
-    #with open('1.html', 'r') as text:
-        #tex = text.read()
-    #print(fetch_movie_info(fetch_kinopoisk_page()))
-    #print(make_dict_name_rating(['Балерина']))
-    #dict_name_rating = make_dict_name_rating(only_popular_titles_list)
+    # print(fetch_kinopoisk_movie_url('Балерина'))
+    # print(fetch_movie_info(fetch_new_kinopoisk_page(fetch_kinopoisk_movie_url('Балерина'))))
+    raw_afisha_html = fetch_afisha_page()
+    list_movie_and_places_amount = (parse_afisha_list(raw_afisha_html))
+    only_popular_titles_list = get_only_popular_movie_titles(list_movie_and_places_amount)
+    dict_name_rating = make_dict_name_rating(only_popular_titles_list)
+    print(dict_name_rating)
     #top10_list = make_top_list(dict_name_rating, top_list_amount)
     #output_to_console(top10_list)
